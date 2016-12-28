@@ -1,0 +1,14 @@
+hash: 39cca5c7a041aceb08102c712c5c01df6e79ec5e11b8bf8c1b33fbec45b6dbda
+updated: 2016-12-27T14:07:00.39287083-08:00
+imports:
+- name: github.com/inconshreveable/mousetrap
+  version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
+- name: github.com/spf13/cobra
+  version: de09d9ce07d0d8a74442cfeaa91628cf9492cc23
+- name: github.com/spf13/pflag
+  version: 25f8b5b07aece3207895bf19f7ab517eb3b22a40
+- name: github.com/spf13/viper
+  version: 5ed0fc31f7f453625df314d8e66b9791e8d13003
+- name: github.com/wtolson/go-taglib
+  version: 6e68349ff94ecea412de7e748cb5eaa26f472777
+testImports: []
