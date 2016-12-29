@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"io/ioutil"
+	"log"
 
 	"fmt"
 
@@ -27,41 +28,38 @@ import (
 var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update metadata using the global flags.",
-	Run: func(cmd *cobra.Command, args []string) {
-		files, _ := ioutil.ReadDir("./")
-		for _, f := range files {
-			fs, err := tags.Read(f.Name())
-			if err != nil {
-				//log.Printf("Can't convert %v: %v", f.Name(), err)
-				continue
-
-			}
-			if artist != "" {
-				fmt.Printf("Setting Artist %v\n", f.Name())
-				fs.SetArtist(artist)
-			}
-
-			if album != "" {
-				fmt.Printf("Setting Album %v\n", f.Name())
-
-				fs.SetAlbum(album)
-			}
-			fs.Save()
-		}
-	},
+	Run:   runCmdUpdate,
 }
 
 func init() {
 	RootCmd.AddCommand(updateCmd)
 
-	// Here you will define your flags and configuration settings.
+}
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// updateCmd.PersistentFlags().String("foo", "", "A help for foo")
+func runCmdUpdate(cmd *cobra.Command, args []string) {
+	files, err := ioutil.ReadDir(directory)
 
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// updateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	if err != nil {
+		log.Printf("Issue reading directory: %v\n", err)
+	}
 
+	for _, f := range files {
+		fs, err := tags.Read(directory + "/" + f.Name())
+		if err != nil {
+			//log.Printf("Can't convert %v: %v", f.Name(), err)
+			continue
+
+		}
+		if artist != "" {
+			fmt.Printf("Setting Artist %v\n", f.Name())
+			fs.SetArtist(artist)
+		}
+
+		if album != "" {
+			fmt.Printf("Setting Album %v\n", f.Name())
+
+			fs.SetAlbum(album)
+		}
+		fs.Save()
+	}
 }

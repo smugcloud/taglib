@@ -17,41 +17,62 @@ package cmd
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 
 	"github.com/spf13/cobra"
 	tags "github.com/wtolson/go-taglib"
 )
 
+//Audio holds the metadata values we're looking for
+type Audio struct {
+	Artist string
+	Album  string
+}
+
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List metadata associated with the files in a directory.",
-	Run: func(cmd *cobra.Command, args []string) {
-		files, _ := ioutil.ReadDir("./")
-		for _, f := range files {
-			fs, err := tags.Read(f.Name())
-			if err != nil {
-				//log.Printf("Can't convert %v: %v", f.Name(), err)
-				continue
-
-			}
-			fmt.Printf("Artist: %v Album: %v\n", fs.Artist(), fs.Album())
-		}
-
-	},
+	Run:   runCmdList,
 }
 
 func init() {
 	RootCmd.AddCommand(listCmd)
+}
 
-	// Here you will define your flags and configuration settings.
+func runCmdList(cmd *cobra.Command, args []string) {
+	res := listMetadata(directory)
+	printResults(res)
+}
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// listCmd.PersistentFlags().String("foo", "", "A help for foo")
+func listMetadata(d string) []*Audio {
+	files, err := ioutil.ReadDir(d)
+	if err != nil {
+		log.Printf("Issue reading directory: %v\n", err)
+	}
+	arr := []*Audio{}
+	for _, f := range files {
+		//Need to ensure the full file path is passed
+		fs, err := tags.Read(d + "/" + f.Name())
+		if err != nil {
+			//If we get here, the file isn't something we care about so skip it
+			continue
 
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// listCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+		}
+		defer fs.Close()
 
+		aa := Audio{fs.Artist(), fs.Album()}
+		arr = append(arr, &aa)
+
+	}
+
+	return arr
+
+}
+
+func printResults(r []*Audio) {
+	for i := range r {
+		met := r[i]
+		fmt.Printf("Artist: %v,  Album: %v\n", met.Artist, met.Album)
+	}
 }

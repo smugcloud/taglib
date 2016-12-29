@@ -21,7 +21,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var artist, album string
+var artist, album, directory string
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
@@ -41,4 +41,6 @@ func Execute() {
 func init() {
 	RootCmd.PersistentFlags().StringVarP(&artist, "artist", "", "", "Artist name.")
 	RootCmd.PersistentFlags().StringVarP(&album, "album", "", "", "Album name.")
+	RootCmd.PersistentFlags().StringVarP(&directory, "directory", "", "", "Directory to evaluate.")
+
 }
